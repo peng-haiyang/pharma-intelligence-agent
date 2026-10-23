@@ -29,7 +29,8 @@ EVIDENCE = [
 
 STOPWORDS = {"what", "are", "the", "for", "and", "with", "from", "about", "into",
              "this", "that", "have", "does", "japan", "latest", "commercial",
-             "market", "information", "our", "could", "would", "should", "how"}
+             "market", "information", "our", "could", "would", "should", "how",
+             "launch", "update", "changes", "changed", "new", "recent"}
 
 def tokens(value: str) -> list[str]:
     return [w for w in re.findall(r"[a-z0-9]+|[\u3040-\u30ff\u3400-\u9fff]+", value.lower())
@@ -46,7 +47,7 @@ def retrieve(question: str, limit: int = 3) -> list[dict]:
         overlap = sum(q[t] * terms[t] for t in q)
         denom = sqrt(sum(v*v for v in q.values()) * sum(v*v for v in terms.values()))
         score = overlap / denom if denom else 0
-        if score > 0:
+        if score > 0 and overlap >= 1:
             scored.append((score, item))
     scored.sort(key=lambda x: (-x[0], x[1].id))
     return [{"id": e.id, "title": e.title, "passage": e.text,
