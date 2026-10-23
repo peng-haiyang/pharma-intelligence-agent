@@ -1,0 +1,50 @@
+[
+  {
+    "id": "pmda-patient-reporting",
+    "publisher": "PMDA",
+    "title": "患者副作用報告の取組の概要",
+    "url": "https://www.pmda.go.jp/safety/reports/patients/0030.html",
+    "section": "情報の活用について",
+    "file": "pmda-patient-reporting.txt",
+    "language": "en/ja",
+    "published": null,
+    "accessed": "2026-10-23",
+    "verified": "2026-10-23",
+    "verification_method": "Manual review of direct public HTML source",
+    "content_kind": "editorial_summary",
+    "rights": "Original attributed factual summary; source copyright retained; no full-text redistribution permission asserted",
+    "sha256": "41602ececd49ca30b97c0ef4e8bcdccbf028930ad5fd729101920dc09a7f4b5a"
+  },
+  {
+    "id": "mhlw-safe-use",
+    "publisher": "MHLW",
+    "title": "医薬品等の適正使用",
+    "url": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/topics/index_00003.html",
+    "section": "安全対策の必要性 / 副作用等の報告",
+    "file": "mhlw-safe-use.txt",
+    "language": "en/ja",
+    "published": null,
+    "accessed": "2026-10-23",
+    "verified": "2026-10-23",
+    "verification_method": "Manual review of direct public HTML source",
+    "content_kind": "editorial_summary",
+    "rights": "Original attributed factual summary; source copyright retained; no full-text redistribution permission asserted",
+    "sha256": "d2af27f59bd8c7c0bca5f6f382b037741b20ec743b48ea28bcdc77247c955dde"
+  },
+  {
+    "id": "jrs-copd",
+    "publisher": "JRS",
+    "title": "慢性閉塞性肺疾患（COPD）",
+    "url": "https://www.jrs.or.jp/citizen/disease/b/b-01.html",
+    "section": "治療",
+    "file": "jrs-copd.txt",
+    "language": "en/ja",
+    "published": null,
+    "accessed": "2026-10-23",
+    "verified": "2026-10-23",
+    "verification_method": "Manual review of direct public HTML source",
+    "content_kind": "editorial_summary",
+    "rights": "Original attributed factual summary; source copyright retained; no full-text redistribution permission asserted",
+    "sha256": "25db5083fdcee03a34c9f54a0c4b599b050d566b1c9e6f3bfa7087f4d85d8557"
+  }
+]

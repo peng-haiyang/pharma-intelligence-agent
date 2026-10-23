@@ -1,0 +1,2 @@
+PMDA evaluates patient adverse drug reaction reports alongside reports from companies and medical institutions and other information to consider further safety measures.
+PMDAは患者副作用報告を企業・医療機関からの報告等と併せて検討し、安全対策の必要性を評価する。

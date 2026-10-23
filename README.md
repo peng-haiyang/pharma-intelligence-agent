@@ -2,7 +2,9 @@
 
 A public-data, portfolio-grade pharmaceutical commercial intelligence agent, evolving from the Japan Market & Launch Outlook prototype.
 
-**Stage:** 1 — API scaffold and tests. RAG, MCP and LLM integration are not yet implemented.
+**Stage:** 2C — verified public Japan evidence, safe local ingestion, and optional semantic retrieval through FastAPI. Answer synthesis abstains; MCP and orchestration are not implemented.
+
+See [Stage 2C setup, sources, and limitations](docs/stage2c.md). Use `/api/v2/questions` for verified evidence; `/api/v1/questions` is the legacy unverified baseline.
 
 ## Run locally
 
