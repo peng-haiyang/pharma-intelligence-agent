@@ -9,8 +9,10 @@ def test_health():
 def test_no_ungrounded_answer():
     response = client.post('/api/v1/questions', json={'question': 'What changed in Japan NHI access?'})
     assert response.status_code == 200
-    assert response.json()['answer'] is None
-    assert response.json()['citations'] == []
+    body = response.json()
+    assert body['answer'] is None
+    assert body['status'] == 'retrieved'
+    assert any(item['id'] == 'mhlw-prices' for item in body['citations'])
 
 def test_short_question_rejected():
     assert client.post('/api/v1/questions', json={'question': 'Hi'}).status_code == 422
