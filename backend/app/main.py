@@ -21,3 +21,27 @@ def ask(payload: Question):
     return {"status": "retrieved", "answer": None, "citations": matches,
             "question": payload.question,
             "message": "Relevant evidence retrieved. LLM synthesis is not enabled; passages are not verified against live source pages."}
+
+# Stage 2C is isolated from the legacy, unverified keyword baseline.
+import logging
+import os
+from app.verified_rag import retrieve_verified
+
+logger = logging.getLogger(__name__)
+
+@app.post('/api/v2/questions')
+def ask_verified(payload: Question):
+    db = os.getenv('PHARMA_VERIFIED_DB')
+    result = {'question': payload.question, 'answer': None, 'citations': [],
+              'status': 'insufficient_evidence', 'synthesis': 'disabled'}
+    if not db:
+        return {**result, 'reason': 'semantic_index_not_configured'}
+    try:
+        hits = retrieve_verified(payload.question, db)
+    except Exception:
+        logger.exception('Verified retrieval unavailable')
+        return {**result, 'reason': 'semantic_index_unavailable'}
+    if not hits:
+        return {**result, 'reason': 'no_evidence_within_distance_threshold'}
+    return {**result, 'status': 'retrieved', 'citations': hits,
+            'reason': 'Evidence only; relevance and completeness require review. No answer synthesis.'}
