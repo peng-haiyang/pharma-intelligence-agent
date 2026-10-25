@@ -36,5 +36,6 @@ and the `PHARMA_VERIFIED_DB` environment variable set.
 - Use trusted local clients only; stdio inherits the client's permissions.
 - The normal CI job tests tool behavior without downloading embedding models.
 - CI now runs real MCP stdio initialization, listing and both tool calls.
-  Search is tested in the no-index abstention path; semantic search needs the
-  separate model/index integration setup. See [Stage 3B](stage3b-agent.md).
+  The normal matrix tests search in the no-index abstention path. The separate
+  semantic-smoke job tests real model/index search over MCP on pull requests
+  and manual dispatch. See [verification](semantic-mcp-verification.md).

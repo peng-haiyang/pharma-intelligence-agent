@@ -70,3 +70,24 @@ def test_api_abstention_and_evidence(monkeypatch):
     assert result['answer'] is None and result['citations']==hits
     assert result['synthesis']=='disabled'
     assert client.post('/api/v2/questions',json={'question':'hi'}).status_code==422
+
+
+@pytest.mark.parametrize('distance,accepted', [
+    (-2.384185791015625e-7, True),  # Observed real Chroma identical-vector result.
+    (-1e-6, True), (-1.0001e-6, False), (-0.1, False),
+    (float('nan'), False), (float('inf'), False), (float('-inf'), False),
+    (0.0, True), (0.35, True), (0.35001, False),
+])
+def test_cosine_roundoff_preserves_threshold(monkeypatch, distance, accepted):
+    docs = rag.load_corpus()
+    class Collection:
+        def count(self):
+            return len(docs)
+        def query(self, **kwargs):
+            return {'ids': [[f"{docs[0]['id']}:0"]], 'distances': [[distance]]}
+    client = SimpleNamespace(get_collection=lambda *a, **k: Collection())
+    monkeypatch.setattr(rag, 'connect', lambda db: (client, None))
+    hits = rag.retrieve_verified('Exact passage regression', 'unused')
+    assert bool(hits) == accepted
+    if accepted:
+        assert hits[0]['distance'] == max(0.0, distance)

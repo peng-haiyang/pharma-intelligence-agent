@@ -13,6 +13,8 @@ CORPUS = Path(__file__).resolve().parents[2] / 'documents' / 'verified'
 MODEL = 'paraphrase-multilingual-MiniLM-L12-v2'
 HOSTS = {'PMDA': 'www.pmda.go.jp', 'MHLW': 'www.mhlw.go.jp', 'JRS': 'www.jrs.or.jp'}
 MAX_BYTES = 100_000
+# Float32 cosine roundoff can put identical vectors just below zero.
+COSINE_ROUNDOFF_TOLERANCE = 1e-6
 
 
 def load_corpus(folder: Path = CORPUS) -> list[dict]:
@@ -102,7 +104,11 @@ def retrieve_verified(question: str, db_path: str, limit: int = 3,
     trusted = {f"{d['id']}:{d['chunk']}": d for d in docs}
     hits = []
     for id, distance in zip(result['ids'][0], result['distances'][0]):
-        if id not in trusted or not math.isfinite(distance) or not 0 <= distance <= max_distance:
+        if (id not in trusted or not math.isfinite(distance)
+                or distance < -COSINE_ROUNDOFF_TOLERANCE):
+            continue
+        distance = max(0.0, distance)
+        if distance > max_distance:
             continue
         # Resolve evidence from the validated corpus, never DB-supplied text/URLs.
         hits.append({**trusted[id], 'distance': float(distance)})
