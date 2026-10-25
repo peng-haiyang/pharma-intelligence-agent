@@ -36,7 +36,7 @@ jobs:
         run: python -m pytest -v
 
   semantic-smoke:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -44,8 +44,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install -r backend/requirements-rag.txt
-      - run: python -m pytest tests/test_verified_integration.py -v
+      - name: Install CPU-only PyTorch
+        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: pip install -r backend/requirements-rag.txt -r backend/requirements-mcp.txt
+      - run: python -m pytest tests/test_verified_integration.py tests/test_semantic_mcp_integration.py -v
         working-directory: backend
         env:
           RUN_SEMANTIC_INTEGRATION: "1"
+          HF_HOME: ${{ runner.temp }}/hf-cache
+          TOKENIZERS_PARALLELISM: "false"

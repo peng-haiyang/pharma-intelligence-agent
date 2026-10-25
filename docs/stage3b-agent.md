@@ -68,9 +68,12 @@ worker cleanup. Fixture search success does not prove semantic retrieval.
 
 CI installs the MCP SDK on Python 3.11 and 3.13 and runs the full suite, including
 the stdio test. An import check prevents accidentally skipping protocol coverage
-if the SDK is missing. The model-backed integration remains opt-in using the
-existing workflow_dispatch semantic-smoke job; it does not cover MCP transport.
-No successful model-backed search over MCP was validated in this change.
+if the SDK is missing. The model-backed integration uses the
+semantic-smoke job, now run on pull requests and workflow_dispatch. It covers
+real model/index retrieval over MCP and through the harness; see
+[semantic MCP verification](semantic-mcp-verification.md) for commands and
+limits on what those tests establish. The original Stage 3B PR did not validate
+successful model-backed MCP search.
 
 The process boundary enforces timeouts for trusted handlers, not security,
 network, filesystem or memory isolation. Handlers must not launch descendant

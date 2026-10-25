@@ -27,6 +27,9 @@ cd backend
 PYTHONPATH=. pytest -q
 ```
 
+Real model/index/MCP verification runs in the PR semantic-smoke CI job. See
+[reproduction and coverage limits](docs/semantic-mcp-verification.md).
+
 ## Repository layout
 
 - `backend/app/` — API and future agent services
