@@ -8,6 +8,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     strategy:
       matrix:
         python: ["3.11", "3.13"]
@@ -26,9 +27,12 @@ jobs:
           python-version: ${{ matrix.python }}
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r requirements-mcp.txt
 
-      - name: Run tests
+      - name: Verify MCP SDK is installed
+        run: python -c "import mcp"
+
+      - name: Run tests (including real MCP stdio and bounded harness)
         run: python -m pytest -v
 
   semantic-smoke:

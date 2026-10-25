@@ -8,6 +8,7 @@ From `backend/`:
 
 ```bash
 pip install -r requirements-mcp.txt
+pip install -r requirements-rag.txt  # Needed for semantic search/ingestion
 # First run Stage 2C verified ingestion to build the local Chroma index.
 export PHARMA_VERIFIED_DB=/absolute/path/to/local/verified-chroma
 python -m app.mcp_server
@@ -34,4 +35,6 @@ and the `PHARMA_VERIFIED_DB` environment variable set.
 - No answer generation, autonomous planning, authentication or deployment.
 - Use trusted local clients only; stdio inherits the client's permissions.
 - The normal CI job tests tool behavior without downloading embedding models.
-- Run full MCP protocol integration tests separately before production use.
+- CI now runs real MCP stdio initialization, listing and both tool calls.
+  Search is tested in the no-index abstention path; semantic search needs the
+  separate model/index integration setup. See [Stage 3B](stage3b-agent.md).
