@@ -1,2 +1,2 @@
--r requirements-rag.txt
+-r requirements.txt
 mcp>=1.0,<2
