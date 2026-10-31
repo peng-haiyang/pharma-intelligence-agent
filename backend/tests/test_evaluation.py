@@ -23,7 +23,7 @@ def test_hand_computed_metrics_with_irrelevant_and_forged_citations():
     times=iter([0, .01, 1, 1.03])
     report=evaluate([positive,negative], lambda q,k:dict(status='retrieved',citations=[other,forged,good]),clock=lambda:next(times))
     m=report['metrics']
-    assert m['recall_at_k']==1 and m['mrr_at_k']==.5
+    assert m['recall_at_k']==1 and m['mrr_at_k']==pytest.approx(1/3)
     assert m['citation_provenance_precision']==pytest.approx(2/3)
     assert m['citation_relevance_precision']==pytest.approx(1/6)
     assert m['abstention_accuracy']==0
@@ -68,3 +68,47 @@ def test_nearest_rank_and_k_bounds():
 def test_malformed_citation_keys_are_invalid_not_a_crash():
     r=evaluate(cases()[:1],lambda q,k:dict(status='retrieved',citations=[{'id':[], 'chunk':{}}]))
     assert r['metrics']['citation_provenance_precision']==0
+
+
+@pytest.mark.parametrize('field,value', [
+    ('url', 'https://example.com/fake'), ('sha256', '0'*64),
+    ('passage', 'Invented evidence'), ('publisher', 'Forged'),
+    ('section', 'Invented section'), ('chunk', 999),
+])
+def test_forged_gold_id_never_receives_retrieval_credit(field, value):
+    positive = cases()[0]
+    good = next(d for d in load_corpus() if d['id'] == positive['expected_ids'][0])
+    forged = {**good, field: value}
+    report = evaluate([positive], lambda q,k: dict(status='retrieved', citations=[forged]))
+    assert report['metrics']['recall_at_k'] == 0
+    assert report['metrics']['mrr_at_k'] == 0
+    assert report['metrics']['citation_provenance_precision'] == 0
+    # Coverage describes whether anything was returned, not trustworthy relevance.
+    assert report['metrics']['answerable_coverage'] == 1
+    assert report['rows'][0]['retrieved_ids'] == [good['id']]
+    assert report['rows'][0]['trusted_retrieved_ids'] == []
+
+
+def test_forged_duplicate_does_not_promote_valid_citation_rank():
+    positive = cases()[0]
+    good = next(d for d in load_corpus() if d['id'] == positive['expected_ids'][0])
+    forged = {**good, 'passage': 'fabricated'}
+    result = dict(status='retrieved', citations=[forged, good, good])
+    report = evaluate([positive], lambda q,k: result)
+    assert report['metrics']['recall_at_k'] == 1
+    assert report['metrics']['mrr_at_k'] == .5
+    assert report['rows'][0]['trusted_retrieved_ids'] == [good['id']]
+    # A valid citation outside the requested k earns no recall/rank credit.
+    top_one = evaluate([positive], lambda q,k: result, k=1)
+    assert top_one['metrics']['recall_at_k'] == 0
+    assert top_one['metrics']['mrr_at_k'] == 0
+
+
+def test_valid_duplicates_preserve_original_slots_and_single_recall():
+    positive = cases()[0]
+    docs = {d['id']: d for d in load_corpus()}
+    good = docs[positive['expected_ids'][0]]
+    unrelated = docs['jrs-copd']
+    report = evaluate([positive], lambda q,k: dict(status='retrieved', citations=[unrelated, unrelated, good]))
+    assert report['metrics']['recall_at_k'] == 1
+    assert report['metrics']['mrr_at_k'] == pytest.approx(1/3)
