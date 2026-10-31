@@ -40,8 +40,8 @@ All cases remain in their applicable denominators; errors are never dropped.
 
 | Metric | Definition |
 | --- | --- |
-| Recall@k | Mean fraction of gold document IDs in top-k citation slots for answerable cases; IDs deduplicated within those slots. |
-| MRR@k | Mean reciprocal rank of first gold document in deduplicated document order within top-k slots; miss = 0. |
+| Recall@k | Mean fraction of gold document IDs with valid corpus provenance in top-k citation slots for answerable cases; valid IDs deduplicated within those slots. A matching ID alone earns no credit. |
+| MRR@k | Mean reciprocal original citation-slot rank of the first provenance-valid gold citation within top-k slots; miss = 0. Invalid citations and duplicates occupy their original slots. |
 | Citation provenance precision | Fraction of all returned citations exactly matching trusted ID, chunk, URL, digest, passage, publisher and section. Invalid citations remain in denominator. No citations = null. |
 | Citation relevance precision | Fraction of all returned citations that pass provenance and match a case's gold document. Negative cases have no relevant gold IDs. |
 | Abstention accuracy | Fraction of expected-abstain cases returning `insufficient_evidence`. Infrastructure unavailability, invalid requests and exceptions earn no credit. |
@@ -50,7 +50,7 @@ All cases remain in their applicable denominators; errors are never dropped.
 | Latency p50/p95 | Nearest-rank wall-clock search timing in milliseconds, including failed calls; ingestion excluded, no warm-up. First query can be cold. |
 | Pair outcome agreement | Fraction of translated pairs with identical returned ID order and status. Agreement can be consistently wrong. |
 
-Reports include per-case outcomes, English/Japanese aggregates, benchmark digest,
+Reports include per-case raw and provenance-valid returned IDs, English/Japanese aggregates, benchmark digest,
 corpus collection fingerprint, immutable model revision, distance threshold,
 Python and package versions, setup time, and Git revision. Source and model
 revision changes invalidate index fingerprints: **re-ingest old indexes** after
@@ -124,3 +124,33 @@ real-model run passed all 3 semantic/MCP/harness integrations. Browser checks
 covered bilingual source switching, report rendering, case filtering, build
 journal navigation, and real backend missing-index behavior. The static preview
 has no live query capability. PR CI results are recorded separately on GitHub.
+
+## Evaluation scoring integrity follow-up — 31 October 2026
+
+Report schema 2 uses scoring version `trusted-citation-slots-v2`. The original
+scorer let a forged passage with a real gold document ID earn recall and MRR
+credit. Recall now requires the citation to pass the existing corpus provenance
+check. MRR uses the first valid gold citation's original slot, so an invalid or
+duplicate citation cannot promote a later valid result to an earlier rank.
+Coverage still records whether anything was returned and does not imply validity.
+`retrieved_ids` remains a raw diagnostic; `trusted_retrieved_ids` exposes the
+validated IDs used for recall. The evaluator source digest identifies the exact
+scoring implementation even when a local report was made before committing it.
+Schema-1 scores used ID-only recall and deduplicated rank; compare scoring
+versions before interpreting historical differences. The workbench's older
+stored report remains a historical schema-1 snapshot.
+
+The unchanged 22-case development set rerun on macOS/Python 3.13 produced:
+recall@3 7/10, MRR@3 0.70, provenance precision 10/10, relevance precision 7/10,
+correct abstention 9/12, operational availability 22/22. English recall was 4/5,
+Japanese recall 3/5; English abstention 5/6 and Japanese abstention 4/6. Outcomes
+match the original report; the scoring correction does not improve retrieval.
+The model revision, benchmark labels and distance threshold were not changed.
+
+Local full-suite validation with model integration enabled: 78 passed, none
+skipped. Added regressions cover forged URLs/digests/passages/publishers/sections/
+chunks, valid results beyond k, and duplicate/invalid citation rank handling.
+The existing PR CI also reruns the real benchmark and preserves its report.
+These are author-labelled development cases, not held-out or clinically reviewed
+examples. The three false abstentions and three unsupported-query retrievals
+remain unresolved; this change fixes measurement integrity, not those failures.

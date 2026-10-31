@@ -82,15 +82,21 @@ def evaluate(cases, search, *, k=3, clock=time.perf_counter):
             valid.append(bool(d and all(hit.get(f) == d[f] for f in
                 ('url', 'sha256', 'passage', 'publisher', 'section'))))
         ids = list(dict.fromkeys(h.get('id') for h in citations[:k] if isinstance(h.get('id'), str)))
+        # A correct ID alone is not evidence: provenance must pass before credit.
+        # Preserve original citation slots for rank, including rejected citations.
+        trusted_ids = list(dict.fromkeys(h['id'] for h, valid_hit in
+            zip(citations[:k], valid[:k]) if valid_hit))
         gold = set(c['expected_ids'])
-        recalled = len(gold.intersection(ids)) / len(gold) if gold else None
-        rr = next((1 / (i + 1) for i, id in enumerate(ids) if id in gold), 0) if gold else None
+        recalled = len(gold.intersection(trusted_ids)) / len(gold) if gold else None
+        rr = next((1 / (i + 1) for i, (hit, valid_hit) in
+            enumerate(zip(citations[:k], valid[:k]))
+            if valid_hit and hit['id'] in gold), 0) if gold else None
         operational = result['status'] in {'retrieved', 'insufficient_evidence'}
         # Infrastructure failure is not a successful evidence-based abstention.
         abstained = result['status'] == 'insufficient_evidence'
         rows.append(dict(id=c['id'], pair_id=c['pair_id'], language=c['language'],
             category=c['category'], expected_abstain=c['expected_abstain'], status=result['status'],
-            error=error, retrieved_ids=ids, recall_at_k=recalled, reciprocal_rank=rr,
+            error=error, retrieved_ids=ids, trusted_retrieved_ids=trusted_ids, recall_at_k=recalled, reciprocal_rank=rr,
             citation_count=len(citations), valid_citations=sum(valid),
             relevant_valid_citations=sum(v and h.get('id') in gold for v,h in zip(valid,citations)),
             abstention_correct=operational and abstained == c['expected_abstain'],
@@ -151,7 +157,8 @@ def main():
     for name in ('chromadb','sentence-transformers','torch'):
         try: packages[name] = version(name)
         except PackageNotFoundError: packages[name] = None
-    report.update(schema_version=1, mode=args.mode, benchmark_version=benchmark['version'],
+    report.update(schema_version=2, scoring_version='trusted-citation-slots-v2',
+        evaluator_sha256=digest(Path(__file__)), mode=args.mode, benchmark_version=benchmark['version'],
         benchmark_sha256=digest(BENCHMARK), corpus_collection=collection_name(load_corpus()),
         model=MODEL, model_revision=MODEL_REVISION, max_distance=.35, setup_ms=setup_ms, commit=commit,
         python=platform.python_version(), packages=packages,
