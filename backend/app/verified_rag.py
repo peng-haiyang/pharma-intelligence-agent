@@ -11,6 +11,7 @@ from app.semantic_rag import chunk_text
 
 CORPUS = Path(__file__).resolve().parents[2] / 'documents' / 'verified'
 MODEL = 'paraphrase-multilingual-MiniLM-L12-v2'
+MODEL_REVISION = 'e8f8c211226b894fcb81acc59f3b34ba3efd5f42'
 HOSTS = {'PMDA': 'www.pmda.go.jp', 'MHLW': 'www.mhlw.go.jp', 'JRS': 'www.jrs.or.jp'}
 MAX_BYTES = 100_000
 # Float32 cosine roundoff can put identical vectors just below zero.
@@ -67,7 +68,7 @@ def load_corpus(folder: Path = CORPUS) -> list[dict]:
 
 def collection_name(docs: list[dict]) -> str:
     # Metadata, content, model and chunker version all invalidate old collections.
-    digest = hashlib.sha256(json.dumps([MODEL, 'chunks-900-150-v1', docs],
+    digest = hashlib.sha256(json.dumps([MODEL, MODEL_REVISION, 'chunks-900-150-v1', docs],
                                       sort_keys=True).encode()).hexdigest()
     return 'verified_' + digest[:40]
 
@@ -75,7 +76,7 @@ def collection_name(docs: list[dict]) -> str:
 def connect(db_path: str):
     from chromadb import PersistentClient
     from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
-    return PersistentClient(path=db_path), SentenceTransformerEmbeddingFunction(model_name=MODEL)
+    return PersistentClient(path=db_path), SentenceTransformerEmbeddingFunction(model_name=MODEL, revision=MODEL_REVISION)
 
 
 def ingest_verified(db_path: str, folder: Path = CORPUS) -> int:

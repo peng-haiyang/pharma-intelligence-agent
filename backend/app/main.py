@@ -45,3 +45,11 @@ def ask_verified(payload: Question):
         return {**result, 'reason': 'no_evidence_within_distance_threshold'}
     return {**result, 'status': 'retrieved', 'citations': hits,
             'reason': 'Evidence only; relevance and completeness require review. No answer synthesis.'}
+
+# A separate development workbench. Build with scripts/build_demo.py first.
+# Same-origin mode can call v2; static hosts remain explicitly offline.
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+_demo = Path(__file__).resolve().parents[2] / 'dist'
+if _demo.is_dir():
+    app.mount('/demo', StaticFiles(directory=_demo, html=True), name='development-demo')

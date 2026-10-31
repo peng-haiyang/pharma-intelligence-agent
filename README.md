@@ -2,7 +2,11 @@
 
 A public-data, portfolio-grade pharmaceutical commercial intelligence agent, evolving from the Japan Market & Launch Outlook prototype.
 
-**Stage:** 3B — verified public Japan evidence, read-only MCP stdio tools, and a bounded deterministic orchestration harness. Evidence only; no LLM answer synthesis or autonomous planner.
+**Stage:** 4A — bilingual evaluation framework and a separate development workbench, built on verified public evidence, read-only MCP tools, and bounded orchestration. Evidence only; no LLM answer synthesis or autonomous planner.
+
+**Development preview:** [Open the evolving workbench](https://pharma-intelligence-development.peng0041.chatgpt.site) (owner-private; sign in). Original Japan site remains untouched.
+
+See [Stage 4A benchmark, metrics, reproduction and limitations](docs/stage4a-evaluation.md) and [development preview and stage evolution](docs/development-preview.md).
 
 See [MCP setup](docs/stage3a-mcp.md) and [Stage 3B usage, tests and limitations](docs/stage3b-agent.md).
 
@@ -34,7 +38,7 @@ Real model/index/MCP verification runs in the PR semantic-smoke CI job. See
 
 - `backend/app/` — API and future agent services
 - `backend/tests/` — automated tests
-- `frontend/` — reserved for migration of original Japan UI
+- `frontend/` — separate static development workbench; original site preserved
 - `docs/migration-plan.md` — recovery status and feature parity plan
 - `.github/workflows/ci.yml` — continuous integration
 
