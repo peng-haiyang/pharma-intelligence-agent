@@ -2,11 +2,11 @@
 
 A public-data, portfolio-grade pharmaceutical commercial intelligence agent, evolving from the Japan Market & Launch Outlook prototype.
 
-**Stage:** 4A — bilingual evaluation framework and a separate development workbench, built on verified public evidence, read-only MCP tools, and bounded orchestration. Evidence only; no LLM answer synthesis or autonomous planner.
+**Stage:** 4B — live hosted questions and streamed evidence activity, alongside the Stage 4A bilingual evaluation framework. Evidence only; no LLM answer synthesis or autonomous planner.
 
 **Development preview:** [Open the evolving workbench](https://pharma-intelligence-development.peng0041.chatgpt.site) (owner-private; sign in). Original Japan site remains untouched.
 
-See [Stage 4A benchmark, metrics, reproduction and limitations](docs/stage4a-evaluation.md) and [development preview and stage evolution](docs/development-preview.md).
+See [Stage 4B live question desk and hosting limitations](docs/stage4b-live-demo.md), [Stage 4A benchmark, metrics, reproduction and limitations](docs/stage4a-evaluation.md) and [development preview and stage evolution](docs/development-preview.md).
 
 See [MCP setup](docs/stage3a-mcp.md) and [Stage 3B usage, tests and limitations](docs/stage3b-agent.md).
 
