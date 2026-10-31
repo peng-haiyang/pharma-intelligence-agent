@@ -1,5 +1,12 @@
 # Development workbench and preview
 
+**Stage 4B update:** the hosted Site now supports custom questions and streamed
+agent activity/evidence checks using a real bounded bilingual lexical retriever.
+See [Stage 4B behavior, reproduction and limitations](stage4b-live-demo.md).
+The Stage 4A static-only description below is retained as deployment history;
+it no longer describes the current hosted question desk. The Python semantic
+engine remains separate.
+
 The original site at https://gsk-japan-market-outlook.politecedar3.chatgpt.site
 is untouched. This repository's `frontend/` is a new workbench, not recovered
 original source and not a claim of feature parity.
@@ -81,3 +88,24 @@ It is owner-private; sign in with the account that owns the Site. Site project:
 `appgprj_6ae5c1d106a08191a408073923906135~appgver_ae576aac80dc8191ab0eb8beb7cb0913`.
 Its separate static source commit is `3df45d9818357c01ff5296cbaea53c28c681668b`.
 This version contains the Stage 4A workbench and the pinned-model local report.
+
+## Stage 4B live deployment — 31 October 2026
+
+The same development URL now serves a Worker-backed question desk with real
+streamed activity and source checks:
+https://pharma-intelligence-development.peng0041.chatgpt.site
+
+Open **Ask & trace**, enter an English or Japanese question, and select
+**Ask & inspect evidence**. The activity list shows scope checks, search,
+source-integrity verification and the final evidence/abstention result. Recognized
+unsupported requests stop early with a reason. Try “What role do inhaled
+bronchodilators play in COPD treatment?” or “患者副作用報告はPMDAでどのように検討されますか？”.
+Questions run against the three-source snapshot; current market intelligence,
+current prices, clinical advice and generated synthesis are not available.
+
+Sites confirmed deployment `appgdep_6ae5d487b2ec8191baae97164bb07937` succeeded.
+Published version:
+`appgprj_6ae5c1d106a08191a408073923906135~appgver_eb8c305b843c8191b8f0b683733b02bc`.
+Separate Site source commit: `dd4afc60af3dd654efd4c6c41f817814d74ea8f8`.
+The preceding static version remains in Site history for rollback. The original
+Japan Site is unchanged. Sign in with the owning ChatGPT account as before.
