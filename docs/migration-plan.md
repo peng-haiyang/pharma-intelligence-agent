@@ -17,3 +17,5 @@ Stage 2: document ingestion, provenance metadata, vector retrieval, grounded res
 Stage 3: MCP tools. Stage 4: bounded orchestration. Stage 5: guardrails. Stage 6: evaluation harness.
 
 Public repo must contain only public/synthetic data; never commit proprietary company information, patient data, credentials or internal forecasts.
+
+Current milestone naming: 2C verified evidence, 3A MCP, 3B bounded orchestration, 4A evaluation + separate development preview. The broad stage numbers above are the original plan, not the current delivery sequence. See [Stage 4A](stage4a-evaluation.md) and [preview evolution](development-preview.md).

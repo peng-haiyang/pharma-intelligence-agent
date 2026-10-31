@@ -53,3 +53,17 @@ jobs:
           RUN_SEMANTIC_INTEGRATION: "1"
           HF_HOME: ${{ runner.temp }}/hf-cache
           TOKENIZERS_PARALLELISM: "false"
+
+      - name: Run Stage 4A bilingual benchmark against a fresh real index
+        run: python -m app.evaluation --mode semantic --db "${{ runner.temp }}/stage4a-index" --output "${{ runner.temp }}/stage4a-report.json"
+        working-directory: backend
+        env:
+          HF_HOME: ${{ runner.temp }}/hf-cache
+          TOKENIZERS_PARALLELISM: "false"
+      - name: Preserve benchmark report even when quality is imperfect
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage4a-semantic-evaluation
+          path: ${{ runner.temp }}/stage4a-report.json
+          if-no-files-found: error
